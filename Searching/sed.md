@@ -36,9 +36,10 @@ You can also view multiple ranges like this:
 
 `sed -n -e '1,2p' -e '4,5p' -e ...`
 
-This is a command to replace every 2nd and up occurrence of 'a' with 'B':
+This is a command to replace every 2nd and up occurrence of 'a' with 'B':  
+(you would do the 2nd only with /2)
 
-`sed 's/a/B/2'`
+`sed 's/a/B/2g'`
 
 `[source]` and `[dest]`: 
 
