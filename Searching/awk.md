@@ -1,3 +1,5 @@
+# awk
+
 	awk [flags] [select pattern/find(sort)/commands] [input file]
 
 Alternatively, if you have an `awk` script, you can do this:
@@ -32,6 +34,13 @@ where x is the new row separator.
 
 Specify a delimiter when outputting using `'BEGIN{OFS="x"}...`. This 
 changes the spaces to whatever you want.
+
+The actual script consists of `'BEGIN{...} {...} END{...}'` where begin and
+end are optional.
+
+Example of a "full" command:
+
+	awk "BEGIN {FS='o'} {print $1,$3} END{print 'Total Rows=',NR}"
 
 There are obviously more things you can do with `awk`, but these are
 the basics.

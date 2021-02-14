@@ -1,3 +1,5 @@
+# tr
+
 	tr '[a]' '[b]'
 
 translates all instances of a into b.
