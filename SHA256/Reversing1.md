@@ -104,6 +104,62 @@ two "states" that the thing could be in, a pre-update and a post-update.
 pre-update = $T_1 + T_2$ from iteration $i$, and post-update = pre-update
  + $T_1$ from iteration $i + 4$.
 
+Maybe just call them registers `a` and `b` (for pre/post-update) and have
+it store them for their respective iterations? Could do 0-7 for initial, and
+8-71 for the rest?
+
+new = old (note that iterations are offset by +3 in order to avoid
+negatives in the implementation. In other words, iteration 0 in the old 
+version would be iteration 3 in the new one. This changes the K and W
+values you have to call.)
+
+$a_3 = a_0, a_2 = b_0, a_1 = c_0, a_0 = d_0$
+
+$b_3 = e_0, b_2 = f_0, b_1 = g_0, b_0 = h_0$
+
+**Then, change the equations from**
+
+$T1_{n} = \Sigma1(e_n) + Ch(e_n, f_n, g_n) + h_n + K_n + W_n$
+
+$T2_{n} = \Sigma0(a_n) + Maj(a_n, b_n, c_n)$
+
+*(note: $T1_{n}$ and $T2_{n}$ are used to calculate the values for 
+iteration n+1, using values from iteration n.)*
+
+**To the newer version:**
+
+$T1_{n} = \Sigma1(b_{n}) + Ch(b_{n}, b_{n-1}, b_{n-2}) + b_{n-3} + K_{n-3} + W_{n-3}$
+
+$T2_{n} = \Sigma0(a_n) + Maj(a_n, a_{n-1}, a_{n-2})$
+
+$b_{n+1} = a_{n-3} + T1_n$
+
+$a_{n+1} = T1_n + T2_n$
+
+-------------
+
+This does two things: it makes it easier to understand (you're fetching values
+calculated in the previous iterations), and it only requires two arrays:
+an $a$ array, and a $b$ array, instead of arrays for all the regs.
+
+Other idea: work way up with example SHA algorithm that only does 2 iterations
+of compression and 2 $W$ generations and see how long that takes to reverse
+
+Or just build a dependency tree of the registers and kinda work your way
+at it from both sides (top and bottom, since middle is unknown). For example,
+the first calculated register $a_1$ in old notation is dependent on everything
+in the equation $T_1$ + $T_2$, but everything is already known except for
+$W(0)$. So you could say $a_1 = W(0) + C$ where $C$ is a calculated constant.
+Then, repeat for $a_2, a_3, e_1, e_2, e_3, ...$ (old notation).
+
+**QUESTION:** can you go backwards? e.g. given $b_{n+1}, b_{n+2}, b_{n+3},
+b_{n+4}$ and $a_{n+1}, a_{n+2}, a_{n+3}, a_{n+4}$, could you determine
+something about $a_n$ and $b_n$, and $W$?
+
+
+
+
+
 
 
 
